@@ -56,6 +56,7 @@ model Transaction {
   user        User            @relation(fields: [userId], references: [id])
   budget      Budget          @relation(fields: [budgetId], references: [id])
   category    Category        @relation(fields: [categoryId], references: [id])
+  date        DateTime        @default(now())
   createdAt   DateTime        @default(now())
 }
 
