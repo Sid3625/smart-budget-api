@@ -11,8 +11,16 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Post('register')
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto.email, dto.password, dto.name);
+  async register(@Body() dto: RegisterDto) {
+    const { access_token, user } = await this.authService.register(
+      dto.email,
+      dto.password,
+      dto.name,
+    );
+    return {
+      user,
+      accessToken: access_token,
+    };
   }
 
   @Throttle({
@@ -37,6 +45,7 @@ export class AuthController {
     } catch (error) {
       return { valid: false, error: error.message };
     }
+
   }
 
   @UseGuards(JwtAuthGuard)

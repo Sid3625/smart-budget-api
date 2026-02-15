@@ -29,7 +29,14 @@ export class AuthService {
       name,
     });
 
-    return this.generateToken(user.id, user.email);
+    const token = this.generateToken(user.id, user.email);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+
+    return {
+      user: userWithoutPassword,
+      ...token,
+    };
   }
 
   async login(email: string, password: string) {
@@ -42,7 +49,8 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const token = this.generateToken(user.id, user.email);
