@@ -12,6 +12,10 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 
@@ -22,6 +26,27 @@ async function bootstrap() {
 
   // const document = SwaggerModule.createDocument(app, config);
   // SwaggerModule.setup('api', app, document);
+  // Enable CORS for frontend
+  const allowedOrigins = [
+    'http://localhost:5174',
+    'http://localhost:5173',
+    process.env.FRONTEND_URL, // Add your production frontend URL as env variable
+  ].filter(Boolean);
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    exposedHeaders: ['Authorization'],
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
