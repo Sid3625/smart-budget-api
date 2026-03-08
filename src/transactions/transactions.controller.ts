@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { GetTransactionsDto } from './dto/get-transactions.dto';
 import { JwtAuthGuard } from '../common/jwt-auth.guard';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -20,8 +21,8 @@ export class TransactionsController {
     }
 
     @Get()
-    findAll(@Request() req) {
-        return this.transactionsService.findAll(req.user.id);
+    findAll(@Request() req, @Query() query: GetTransactionsDto) {
+        return this.transactionsService.findAll(req.user.id, query);
     }
 
     @Get(':id')
