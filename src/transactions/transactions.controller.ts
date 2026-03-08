@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -11,32 +22,40 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 @UseGuards(JwtAuthGuard)
 @Controller('transactions')
 export class TransactionsController {
-    constructor(private readonly transactionsService: TransactionsService) { }
+  constructor(private readonly transactionsService: TransactionsService) {}
 
-    @Post()
-    create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
-        console.log('Creating transaction for user:', req.user.id);
-        console.log('Payload:', createTransactionDto);
-        return this.transactionsService.create(req.user.id, createTransactionDto);
-    }
+  @Post()
+  create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
+    console.log('Creating transaction for user:', req.user.id);
+    console.log('Payload:', createTransactionDto);
+    return this.transactionsService.create(req.user.id, createTransactionDto);
+  }
 
-    @Get()
-    findAll(@Request() req, @Query() query: GetTransactionsDto) {
-        return this.transactionsService.findAll(req.user.id, query);
-    }
+  @Get()
+  findAll(@Request() req, @Query() query: GetTransactionsDto) {
+    return this.transactionsService.findAll(req.user.id, query);
+  }
 
-    @Get(':id')
-    findOne(@Request() req, @Param('id') id: string) {
-        return this.transactionsService.findOne(id, req.user.id);
-    }
+  @Get(':id')
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.transactionsService.findOne(id, req.user.id);
+  }
 
-    @Patch(':id')
-    update(@Request() req, @Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-        return this.transactionsService.update(id, req.user.id, updateTransactionDto);
-    }
+  @Patch(':id')
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateTransactionDto: UpdateTransactionDto,
+  ) {
+    return this.transactionsService.update(
+      id,
+      req.user.id,
+      updateTransactionDto,
+    );
+  }
 
-    @Delete(':id')
-    remove(@Request() req, @Param('id') id: string) {
-        return this.transactionsService.remove(id, req.user.id);
-    }
+  @Delete(':id')
+  remove(@Request() req, @Param('id') id: string) {
+    return this.transactionsService.remove(id, req.user.id);
+  }
 }

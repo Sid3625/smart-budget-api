@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Res, UseGuards, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Res,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -8,7 +15,7 @@ import { JwtAuthGuard } from '../common/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
@@ -45,7 +52,6 @@ export class AuthController {
     } catch (error) {
       return { valid: false, error: error.message };
     }
-
   }
 
   @UseGuards(JwtAuthGuard)

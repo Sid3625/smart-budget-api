@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async register(email: string, password: string, name: string) {
     const existingUser = await this.usersService.findByEmail(email);
@@ -49,7 +49,6 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-
       throw new UnauthorizedException('Invalid email or password');
     }
 

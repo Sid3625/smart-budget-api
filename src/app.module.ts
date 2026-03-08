@@ -10,6 +10,8 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { BudgetsModule } from './budgets/budgets.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { GoalsModule } from './goals/goals.module';
+import { BillsModule } from './bills/bills.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { TransactionsModule } from './transactions/transactions.module';
     BudgetsModule,
     CategoriesModule,
     TransactionsModule,
+    GoalsModule,
+    BillsModule,
   ],
   controllers: [AppController],
   providers: [
