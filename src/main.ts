@@ -30,6 +30,7 @@ async function bootstrap() {
   const allowedOrigins = [
     'http://localhost:5174',
     'http://localhost:5173',
+    'https://smart-budget-ui.vercel.app',
     process.env.FRONTEND_URL, // Add your production frontend URL as env variable
   ].filter(Boolean);
 

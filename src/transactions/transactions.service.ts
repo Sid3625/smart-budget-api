@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { GetTransactionsDto } from './dto/get-transactions.dto';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TransactionsService {
@@ -73,23 +75,51 @@ export class TransactionsService {
         }
     }
 
-    async findAll(userId: string) {
-        const transactions = await this.prisma.transaction.findMany({
-            where: { userId },
-            include: {
-                budget: true,
-                category: true,
-            },
-            orderBy: {
-                createdAt: 'desc',
+    async findAll(userId: string, query: GetTransactionsDto = {}) {
+        const { category, startDate, endDate, page = 1, limit = 10 } = query;
+        const where: Prisma.TransactionWhereInput = {
+            userId,
+        };
+
+        if (category) {
+            where.category = {
+                name: category,
+            };
+        }
+
+        if (startDate || endDate) {
+            where.date = {};
+            if (startDate) {
+                where.date.gte = new Date(startDate);
             }
-        });
+            if (endDate) {
+                where.date.lte = new Date(endDate);
+            }
+        }
+
+        const skip = (page - 1) * limit;
+
+        const [transactions, total] = await Promise.all([
+            this.prisma.transaction.findMany({
+                where,
+                include: {
+                    budget: true,
+                    category: true,
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                skip,
+                take: limit,
+            }),
+            this.prisma.transaction.count({ where }),
+        ]);
 
         return {
             transactions,
-            total: transactions.length,
-            totalPages: 1,
-            currentPage: 1,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
         };
     }
 

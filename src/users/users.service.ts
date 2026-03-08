@@ -3,7 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({
@@ -13,6 +13,13 @@ export class UsersService {
 
   create(data: { email: string; password: string; name: string }) {
     return this.prisma.user.create({
+      data,
+    });
+  }
+
+  update(id: string, data: Partial<{ email: string; name: string; password?: string }>) {
+    return this.prisma.user.update({
+      where: { id },
       data,
     });
   }
