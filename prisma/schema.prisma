@@ -13,14 +13,16 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
+  id           String          @id @default(uuid())
+  email        String          @unique
   password     String
   name         String
   budgets      Budget[]
   transactions Transaction[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  goals        Goal[]
+  bills        RecurringBill[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }
 
 model Budget {
@@ -63,4 +65,27 @@ model Transaction {
 enum TransactionType {
   income
   expense
+}
+
+model Goal {
+  id           String   @id @default(uuid())
+  name         String
+  targetAmount Decimal
+  currentAmount Decimal @default(0)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model RecurringBill {
+  id            String   @id @default(uuid())
+  name          String
+  amount        Decimal
+  dueDate       DateTime
+  isPaid        Boolean  @default(false)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

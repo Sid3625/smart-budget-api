@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) { }
+  constructor(private usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
@@ -14,7 +14,10 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('me')
-  async updateProfile(@Req() req, @Body() body: { name?: string; email?: string }) {
+  async updateProfile(
+    @Req() req,
+    @Body() body: { name?: string; email?: string },
+  ) {
     return this.usersService.update(req.user.id, body);
   }
 }

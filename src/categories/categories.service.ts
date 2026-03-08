@@ -1,78 +1,88 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class CategoriesService {
-    constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-    async create(userId: string, createCategoryDto: CreateCategoryDto) {
-        const budget = await this.prisma.budget.findUnique({
-            where: { id: createCategoryDto.budgetId },
-        });
+  async create(userId: string, createCategoryDto: CreateCategoryDto) {
+    const budget = await this.prisma.budget.findUnique({
+      where: { id: createCategoryDto.budgetId },
+    });
 
-        if (!budget) {
-            throw new NotFoundException('Budget not found');
-        }
-
-        if (budget.userId !== userId) {
-            throw new ForbiddenException('You do not have permission to add a category to this budget');
-        }
-
-        return this.prisma.category.create({
-            data: {
-                ...createCategoryDto,
-            },
-        });
+    if (!budget) {
+      throw new NotFoundException('Budget not found');
     }
 
-    async findAll(userId: string) {
-        return this.prisma.category.findMany({
-            where: {
-                budget: {
-                    userId: userId,
-                },
-            },
-            include: {
-                budget: true,
-            }
-        });
+    if (budget.userId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to add a category to this budget',
+      );
     }
 
-    async findOne(id: string, userId: string) {
-        const category = await this.prisma.category.findUnique({
-            where: { id },
-            include: {
-                budget: true,
-            },
-        });
+    return this.prisma.category.create({
+      data: {
+        ...createCategoryDto,
+      },
+    });
+  }
 
-        if (!category) {
-            throw new NotFoundException(`Category with ID ${id} not found`);
-        }
+  async findAll(userId: string) {
+    return this.prisma.category.findMany({
+      where: {
+        budget: {
+          userId: userId,
+        },
+      },
+      include: {
+        budget: true,
+      },
+    });
+  }
 
-        if (category.budget.userId !== userId) {
-            throw new ForbiddenException('You do not have access to this category');
-        }
+  async findOne(id: string, userId: string) {
+    const category = await this.prisma.category.findUnique({
+      where: { id },
+      include: {
+        budget: true,
+      },
+    });
 
-        return category;
+    if (!category) {
+      throw new NotFoundException(`Category with ID ${id} not found`);
     }
 
-    async update(id: string, userId: string, updateCategoryDto: UpdateCategoryDto) {
-        await this.findOne(id, userId);
-
-        return this.prisma.category.update({
-            where: { id },
-            data: updateCategoryDto,
-        });
+    if (category.budget.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this category');
     }
 
-    async remove(id: string, userId: string) {
-        await this.findOne(id, userId);
+    return category;
+  }
 
-        return this.prisma.category.delete({
-            where: { id },
-        });
-    }
+  async update(
+    id: string,
+    userId: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ) {
+    await this.findOne(id, userId);
+
+    return this.prisma.category.update({
+      where: { id },
+      data: updateCategoryDto,
+    });
+  }
+
+  async remove(id: string, userId: string) {
+    await this.findOne(id, userId);
+
+    return this.prisma.category.delete({
+      where: { id },
+    });
+  }
 }
