@@ -37,4 +37,4 @@ import { TransactionsModule } from './transactions/transactions.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}
